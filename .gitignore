@@ -11,7 +11,7 @@ dist/
 
 # LegacyLift pipeline output (never commit generated reports/diffs)
 out/
-legacylift_dashboard_data/
+legacylift_dashboard_data*/
 
 # Virtual environments
 .venv/
