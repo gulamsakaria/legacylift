@@ -19,6 +19,7 @@ Bob 2.0's Agent mode, parallel subagents, and document understanding. See
 [Install](#install) ·
 [Usage](#usage) ·
 [Dashboard](#dashboard-upload-your-own-code) ·
+[Bob 2.0 screenshots](#built-with-ibm-bob-20--real-session-screenshots) ·
 [Results](#results-real-not-staged) ·
 [Tech stack](#tech-stack) ·
 [Known limitations](#known-limitations)
@@ -123,12 +124,48 @@ small VPS. It will **not** run as-is on Vercel's static/serverless hosting
 `out/report.html`) as a static site instead — that works on Vercel/GitHub
 Pages with no changes.
 
-## Screenshots
+## Built with IBM Bob 2.0 — real session screenshots
 
-*(placeholders — add your own before submitting)*
+Not staged after the fact — these are actual Bob 2.0 Agent-mode sessions
+against this repo: reading the codebase before touching it, running
+**parallel subagents** (`scanner-agent` / `test-agent` / `refactor-agent`
+/ `docs-agent`) to add a detection rule across 4 files at once, and a
+pre-submission audit where Bob caught on its own that `README.md`'s
+numbers had drifted from a fresh run and flagged it instead of silently
+"fixing" the claim.
 
-- `docs/bob-session-notes/` — Bob task-session screenshots
-- `docs/sample-report/report.html` — a real generated report, open it directly
+<table>
+<tr>
+<td width="50%">
+<img src="docs/bob-session-notes/01-initial-codebase-overview.png" width="100%">
+<b>1. Reads the whole codebase first</b><br>
+Before any change: explores every module, summarizes the 6-stage pipeline.
+</td>
+<td width="50%">
+<img src="docs/bob-session-notes/02-parallel-agents-ll015-kickoff.png" width="100%">
+<b>2. Parallel subagents, real ownership boundaries</b><br>
+scanner/test/refactor/docs-agent add rule LL015 across 4 files at once.
+</td>
+</tr>
+<tr>
+<td width="50%">
+<img src="docs/bob-session-notes/04-ll015-before-after-pipeline.png" width="100%">
+<b>3. Run → observe → prove it</b><br>
+Re-runs the real pipeline; the new rule fires on a fixture it had never seen.
+</td>
+<td width="50%">
+<img src="docs/bob-session-notes/12-final-security-honesty-audit.png" width="100%">
+<b>4. Honest, not just complete</b><br>
+Audits for secrets/paths, then flags a stale-numbers issue unprompted.
+</td>
+</tr>
+</table>
+
+**All 12 screenshots + a factual, file-by-file log:**
+[`docs/bob-session-notes/`](docs/bob-session-notes/) ·
+[`session-log.md`](docs/bob-session-notes/session-log.md)
+
+A real generated report, open it directly: `docs/sample-report/report.html`
 
 ## Results (real, not staged)
 
