@@ -1,0 +1,12 @@
+
+services:
+  db:
+    image: mysql:8.0
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: legacy_school_portal
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./examples/legacy-school-portal/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LegacyLift — Legacy PHP Modernizer</title>
+<meta name="description" content="Point LegacyLift at an old PHP codebase and get a risk report, safe automated fixes, generated tests, and a before/after proof — in minutes instead of weeks. Built for the IBM Bob 2.0 Hackathon by Gulam Sakaria.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230f1116'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%236f9bff' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='14' fill='none' stroke='%236f9bff' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="bg-orbs" aria-hidden="true"><span class="orb orb1"></span><span class="orb orb2"></span><span class="orb orb3"></span></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="brand" href="#top">
+      <span class="radar" style="width:26px;height:26px;"></span>
+      LegacyLift
+    </a>
+    <div class="nav-links" id="nav-links">
+      <a href="#scan">Scan your code</a>
+      <a href="#problem">Problem</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#rules">Rules</a>
+      <a href="#results">Results</a>
+      <a href="#get-started">Get started</a>
+    </div>
+    <div class="nav-cta">
+      <button class="icon-btn" id="theme-toggle" title="Toggle light/dark" aria-label="Toggle theme">🌙</button>
+      <a class="btn btn-ghost" href="https://github.com/gulamsakaria/legacylift" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <div class="eyebrow">🏆 Built for the IBM Bob 2.0 Hackathon · lablab.ai</div>
+        <h1>Modernize legacy <span class="grad-text">PHP</span>, safely, in minutes.</h1>
+        <p class="lead">
+          Point LegacyLift at an old PHP codebase. Get a risk report, safe automated
+          fixes, generated regression tests, and a before/after proof — instead of
+          weeks of risky manual rewrites.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#scan">Scan my code now</a>
+          <a class="btn btn-ghost" href="#report">See a real report →</a>
+        </div>
+        <div class="hero-meta">
+          <span>⚡ Offline — no API key at runtime</span>
+          <span>🔍 16 detection rules</span>
+          <span>📄 MIT licensed</span>
+        </div>
+      </div>
+
+      <div class="mock reveal" data-delay="1">
+        <div class="mock-card tilt" data-tilt>
+          <div class="term">
+            <div class="term-dots"><span></span><span></span><span></span></div>
+            <code>$ legacylift run examples/legacy-school-portal <span class="accent">--doc</span> MIGRATION_NOTES.md</code>
+          </div>
+          <div class="mock-stats">
+            <div class="mock-stat">
+              <div class="l">Risk score</div>
+              <div class="n"><span class="risk-before">100</span><span class="arrow">→</span><span class="risk-after">14</span></div>
+            </div>
+            <div class="mock-stat">
+              <div class="l">Findings</div>
+              <div class="n"><span class="risk-before">87</span><span class="arrow">→</span><span class="risk-after">15</span></div>
+            </div>
+            <div class="mock-stat">
+              <div class="l">Review time</div>
+              <div class="n">1.5<span style="font-size:13px;">h</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LIVE SCAN ================= -->
+  <section id="scan">
+    <div class="container">
+      <div class="section-head will-reveal">
+        <div class="eyebrow">⚡ Live, no signup</div>
+        <h2>Scan your own PHP code right now</h2>
+        <p>Upload a <code>.zip</code> of a small project, or a single <code>.php</code> file — this
+           runs the real scan → fix → test → verify → report pipeline and hands you back
+           the actual report. Nothing is stored after the response.</p>
+      </div>
+
+      <form id="scan-form" class="scan-panel tilt will-reveal" data-tilt
+            action="/api/scan" method="post" enctype="multipart/form-data">
+        <label class="dropzone" id="dropzone" for="project">
+          <input type="file" id="project" name="project" accept=".zip,.php,.phtml,.inc" required>
+          <div class="dz-icon">⇪</div>
+          <div class="dz-text" id="dz-text">Drop a .zip or .php file here, or click to browse</div>
+        </label>
+        <div class="hint" style="text-align:center;">Single .php file works best for a quick try — keep zips small.</div>
+        <button type="submit" id="scan-btn">Run LegacyLift on this file</button>
+        <div class="scan-limits">
+          <span>📦 ~4&nbsp;MB upload limit</span>
+          <span>⏱️ single request, no history saved</span>
+          <span>🔒 processed and discarded immediately</span>
+        </div>
+      </form>
+      <div class="scan-fallback">
+        Need a bigger project, run history, or a migration-notes doc? Run the full
+        <a href="#get-started">local dashboard</a> instead — no size limit there.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROBLEM ================= -->
+  <section id="problem">
+    <div class="container">
+      <div class="section-head will-reveal">
+        <div class="eyebrow">The problem</div>
+        <h2>Thousands of small sites still run PHP 5.x-era code</h2>
+        <p>Schools, clinics, and local news outlets in emerging markets keep running code
+           nobody fully remembers anymore — and modernizing it by hand is slow, risky,
+           and usually gets skipped.</p>
+      </div>
+      <div class="problem-grid will-reveal">
+        <div class="problem-card"><div class="ico">🗄️</div><h3>Removed <code>mysql_*</code> calls</h3><p>Deprecated in PHP 7, removed entirely — old code simply stops running.</p></div>
+        <div class="problem-card"><div class="ico">💉</div><h3>SQL injection</h3><p>Queries built by concatenating request input directly into SQL strings.</p></div>
+        <div class="problem-card"><div class="ico">🔓</div><h3>Weak MD5 passwords</h3><p>Passwords hashed (or compared) with MD5/SHA1 instead of <code>password_hash()</code>.</p></div>
+        <div class="problem-card"><div class="ico">🛡️</div><h3>No CSRF protection</h3><p>State-changing forms with no token — trivially forgeable requests.</p></div>
+        <div class="problem-card"><div class="ico">📤</div><h3>Unescaped output (XSS)</h3><p>User input echoed straight into HTML with no escaping.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-head will-reveal">
+        <div class="eyebrow">The solution</div>
+        <h2>A deterministic six-stage pipeline</h2>
+        <p>Every fix is a human-reviewable diff before anything is written — nothing
+           changes silently.</p>
+      </div>
+      <div class="pipeline will-reveal">
+        <div class="step"><div class="num">1</div><h3>Scan</h3><p>16 rules find SQLi, XSS, weak hashing, CSRF gaps &amp; more</p></div>
+        <div class="step"><div class="num">2</div><h3>Plan</h3><p>Findings prioritised: auto-fixable → assisted → manual</p></div>
+        <div class="step"><div class="num">3</div><h3>Fix</h3><p>Safe rewrites, reviewable as a unified diff first</p></div>
+        <div class="step"><div class="num">4</div><h3>Test</h3><p>PHPUnit regression tests generated from real findings</p></div>
+        <div class="step"><div class="num">5</div><h3>Verify</h3><p>Re-scans the fixed copy, compares before vs. after</p></div>
+        <div class="step"><div class="num">6</div><h3>Report</h3><p>One self-contained HTML report, dark-mode aware</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RULES ================= -->
+  <section id="rules">
+    <div class="container">
+      <div class="section-head will-reveal">
+        <div class="eyebrow">Detection rules</div>
+        <h2>16 rules covering the common PHP 5→8 hazards</h2>
+        <p>Dependency-free, line-oriented regex rules — no tree-sitter, no PHP
+           toolchain required to scan.</p>
+      </div>
+      <div class="rules-grid will-reveal">
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL001</span><span class="badge sev-critical">critical</span></div><p>Removed <code>mysql_*</code> functions</p><span class="fix-tag fix-auto">✅ Auto-fix → PDO</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL002</span><span class="badge sev-critical">critical</span></div><p>SQL built by concatenating request input</p><span class="fix-tag fix-auto">✅ Auto-fix → parameterized query</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL003</span><span class="badge sev-high">high</span></div><p>Unescaped output of user input (XSS)</p><span class="fix-tag fix-auto">✅ Auto-fix → <code>e()</code> escaping</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL004</span><span class="badge sev-critical">critical</span></div><p>Weak MD5/SHA1 password hashing</p><span class="fix-tag fix-auto">✅ Auto-fix → <code>password_hash()</code></span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL005</span><span class="badge sev-high">high</span></div><p>Missing CSRF token on state-changing forms</p><span class="fix-tag fix-auto">✅ Auto-fix → token + verification</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL006</span><span class="badge sev-high">high</span></div><p><code>extract($_REQUEST)</code> / register-globals style</p><span class="fix-tag fix-assisted">🚩 Assisted — human decision</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL007</span><span class="badge sev-medium">medium</span></div><p>Deprecated functions (<code>ereg*</code>, <code>split</code>…)</p><span class="fix-tag fix-auto">✅ Auto-fix → modern equivalents</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL008</span><span class="badge sev-medium">medium</span></div><p>Short open tags, <code>@</code> suppression, silenced errors</p><span class="fix-tag fix-auto">✅ Partial auto-fix</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL009</span><span class="badge sev-critical">critical</span></div><p><code>eval</code>/<code>exec</code>/dynamic include (LFI/RFI)</p><span class="fix-tag fix-assisted">🚩 Never auto-rewritten</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL010</span><span class="badge sev-high">high</span></div><p>File upload with no validation</p><span class="fix-tag fix-assisted">🚩 Assisted — business decision</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL011</span><span class="badge sev-high">high</span></div><p>Hard-coded credentials</p><span class="fix-tag fix-auto">✅ Auto-fix → <code>.env</code></span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL012</span><span class="badge sev-low">low</span></div><p>Mixed HTML + business logic</p><span class="fix-tag fix-detect">Detection only</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL013</span><span class="badge sev-medium">medium</span></div><p>Missing session ID regeneration on login</p><span class="fix-tag fix-auto">✅ Auto-fix → inserted before write</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL014</span><span class="badge sev-low">low</span></div><p>Old-style constructors / missing visibility</p><span class="fix-tag fix-detect">Detection only</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL015</span><span class="badge sev-critical">critical</span></div><p><code>unserialize()</code> on raw request input</p><span class="fix-tag fix-assisted">🚩 Assisted — needs human review</span></div>
+        <div class="rule-card tilt" data-tilt><div class="rule-top"><span class="rule-id">LL016</span><span class="badge sev-high">high</span></div><p><code>rand()</code>/<code>mt_rand()</code> for security tokens</p><span class="fix-tag fix-detect">Detection only</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section id="results">
+    <div class="container">
+      <div class="section-head will-reveal">
+        <div class="eyebrow">Real numbers, not staged</div>
+        <h2>Run against our demo school portal</h2>
+        <p>20 files, a real vulnerable PHP 5-era app — see <code>docs/RESULTS.md</code> for the unedited pipeline output.</p>
+      </div>
+      <div class="results-grid will-reveal">
+        <div class="result-card"><div class="l">Risk score</div><div class="val"><span class="risk-before">100</span><span class="arrow">→</span><span class="risk-after count-up" data-target="14">0</span></div></div>
+        <div class="result-card"><div class="l">Total findings</div><div class="val"><span class="risk-before">87</span><span class="arrow">→</span><span class="risk-after count-up" data-target="15">0</span></div></div>
+        <div class="result-card"><div class="l">Critical findings</div><div class="val"><span class="risk-before">43</span><span class="arrow">→</span><span class="risk-after count-up" data-target="1">0</span></div></div>
+        <div class="result-card"><div class="l">Manual effort</div><div class="val">89.1h<span class="arrow">→</span><span class="risk-after">1.5h</span></div></div>
+      </div>
+      <div class="result-note">The one remaining critical finding is a dangerous dynamic <code>include()</code> LegacyLift deliberately never auto-rewrites. Full breakdown in <code>docs/RESULTS.md</code>.</div>
+    </div>
+  </section>
+
+  <!-- ================= TECH STACK ================= -->
+  <section id="tech">
+    <div class="container">
+      <div class="section-head will-reveal">
+        <div class="eyebrow">Tech stack</div>
+        <h2>Dependency-light, fully offline at runtime</h2>
+      </div>
+      <div class="chip-row will-reveal">
+        <span class="chip">🐍 Python 3.11+</span>
+        <span class="chip">🧩 Regex-based analysis (no tree-sitter)</span>
+        <span class="chip">📄 Self-contained HTML report</span>
+        <span class="chip">🌐 Flask / stdlib http.server</span>
+        <span class="chip">🧪 PHPUnit-generated tests</span>
+        <span class="chip">✅ pytest for the tool itself</span>
+        <span class="chip">🔒 Zero network calls at runtime</span>
+        <span class="chip">📜 MIT licensed</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SAMPLE REPORT ================= -->
+  <section id="report">
+    <div class="container">
+      <div class="section-head will-reveal">
+        <div class="eyebrow">See it for yourself</div>
+        <h2>A real, unedited generated report</h2>
+        <p>This is the exact output of <code>legacylift run</code> against the demo app — not a mockup.</p>
+      </div>
+      <div class="report-preview will-reveal">
+        <div class="report-frame-wrap tilt" data-tilt>
+          <div class="report-frame-bar"><span></span><span></span><span></span></div>
+          <iframe src="sample-report/report.html" title="LegacyLift sample report" loading="lazy"></iframe>
+        </div>
+        <div class="report-copy">
+          <h3 style="margin-top:0;">What's inside</h3>
+          <ul>
+            <li><strong>Before/after risk score</strong> and a verification pass/fail banner</li>
+            <li><strong>Every finding</strong>, filterable by rule, severity and file</li>
+            <li><strong>Every fix</strong> as a real unified diff, ready to review</li>
+            <li>Dark-mode aware, <strong>zero external requests</strong> — a single HTML file</li>
+          </ul>
+          <a class="btn btn-primary" href="sample-report/report.html" target="_blank" rel="noopener">Open the full report →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GET STARTED / CTA ================= -->
+  <section id="get-started">
+    <div class="container">
+      <div class="cta-band will-reveal">
+        <h2>Want the full local dashboard?</h2>
+        <p>No size limit, run history, and migration-notes support — install it and run
+           <code style="background:rgba(0,0,0,.18);padding:1px 6px;border-radius:5px;">legacylift dashboard</code>
+           for a local upload UI, or use the CLI directly. No PHP installation required to scan or fix.</p>
+        <div class="install-line">
+          <code id="install-cmd">pip install -e ".[serve]" &amp;&amp; legacylift dashboard</code>
+          <button id="copy-install" type="button">Copy</button>
+        </div>
+        <div style="margin-top:24px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a class="btn btn-primary" href="https://github.com/gulamsakaria/legacylift" target="_blank" rel="noopener">Get the code on GitHub</a>
+          <a class="btn btn-ghost" href="#report">See a real report</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="credit">LegacyLift — built for the IBM Bob 2.0 Hackathon (lablab.ai, 25–27 Sep 2026). Developed by
+      <a href="https://www.linkedin.com/in/gulamsakaria/" target="_blank" rel="noopener"><strong>Gulam Sakaria</strong></a>.</div>
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/gulamsakaria/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/gulamsakaria" target="_blank" rel="noopener">GitHub Profile</a>
+      <a href="https://github.com/gulamsakaria/legacylift" target="_blank" rel="noopener">Repo</a>
+      <a href="https://github.com/gulamsakaria/legacylift/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<div class="scan-overlay" id="scan-overlay">
+  <div class="scan-box">
+    <div class="scan-ring"></div>
+    <div class="scan-text" id="scan-step">Uploading…</div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

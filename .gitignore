@@ -1,0 +1,22 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+build/
+dist/
+
+# LegacyLift pipeline output (never commit generated reports/diffs)
+out/
+legacylift_dashboard_data/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store

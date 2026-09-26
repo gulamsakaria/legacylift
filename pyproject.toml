@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "legacylift"
+version = "0.1.0"
+description = "LegacyLift — scan, prioritise, fix and prove modernization of legacy PHP codebases."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "StratifyX Global / Gulam Sakaria" }]
+dependencies = [
+    "pyyaml>=6.0",
+    "jinja2>=3.1",
+    "colorama>=0.4.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4", "black>=24.0"]
+serve = ["flask>=3.0"]
+
+[project.scripts]
+legacylift = "legacylift.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
