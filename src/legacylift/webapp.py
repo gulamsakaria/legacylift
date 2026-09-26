@@ -112,8 +112,12 @@ _PAGE_STYLE = """
     --critical: #d1273d; --good: #1f9d55;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#0f1116; --panel:#1a1d24; --text:#e7e9ee; --muted:#9aa2b1;
+    :root:not([data-theme="light"]) { --bg:#0f1116; --panel:#1a1d24; --text:#e7e9ee; --muted:#9aa2b1;
             --border:#2a2e38; --accent:#6f9bff; --accent-dark:#8fb0ff; --accent2:#a98bff; }
+  }
+  :root[data-theme="dark"] {
+    --bg:#0f1116; --panel:#1a1d24; --text:#e7e9ee; --muted:#9aa2b1;
+    --border:#2a2e38; --accent:#6f9bff; --accent-dark:#8fb0ff; --accent2:#a98bff;
   }
   * { box-sizing: border-box; }
   html { background: var(--bg); }
@@ -134,13 +138,38 @@ _PAGE_STYLE = """
   @keyframes float2 { 0%,100% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(-50px,-40px,0) scale(1.08); } }
   @keyframes float3 { 0%,100% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(-30px,36px,0) scale(0.92); } }
 
-  header { position:relative; z-index:1; padding:30px 32px; border-bottom:1px solid var(--border); }
+  /* --- top nav, matching the LegacyLift website --- */
+  nav { position:sticky; top:0; z-index:40; background:var(--panel);
+        background:color-mix(in srgb, var(--panel) 80%, transparent);
+        backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+        border-bottom:1px solid var(--border); }
+  .nav-inner { max-width:840px; margin:0 auto; padding:14px 20px; display:flex;
+               align-items:center; justify-content:space-between; gap:14px; }
+  .brand { display:flex; align-items:center; gap:9px; font-weight:800; font-size:16px;
+           text-decoration:none; color:var(--text); }
+  .nav-cta { display:flex; align-items:center; gap:10px; }
+  .icon-btn { width:32px; height:32px; border-radius:9px; border:1px solid var(--border);
+              background:var(--panel); color:var(--text); cursor:pointer; display:flex;
+              align-items:center; justify-content:center; font-size:14px;
+              transition:transform .15s ease, border-color .15s ease; }
+  .icon-btn:hover { transform:translateY(-1px); border-color:var(--accent); }
+  .btn-ghost { display:inline-flex; align-items:center; padding:8px 16px; border-radius:9px;
+               border:1px solid var(--border); background:var(--panel); color:var(--text);
+               font-size:13px; font-weight:700; text-decoration:none;
+               transition:transform .15s ease, border-color .15s ease; }
+  .btn-ghost:hover { transform:translateY(-1px); border-color:var(--accent); }
+
+  header { position:relative; z-index:1; padding:34px 32px 26px; }
   .header-inner { max-width:840px; margin:0 auto; display:flex; align-items:center;
                   justify-content:space-between; gap:20px; }
-  header h1 { margin:0 0 4px; font-size:24px; letter-spacing:-.01em; }
+  .eyebrow { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:700;
+             color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent);
+             border:1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+             padding:5px 11px; border-radius:999px; margin-bottom:12px; }
+  header h1 { margin:0 0 6px; font-size:28px; letter-spacing:-.015em; line-height:1.15; }
   .grad-text { background:linear-gradient(100deg, var(--accent), var(--accent2));
                -webkit-background-clip:text; background-clip:text; color:transparent; }
-  header .sub { color:var(--muted); font-size:14px; max-width:52ch; }
+  header .sub { color:var(--muted); font-size:14.5px; max-width:52ch; }
 
   /* --- spinning radar mark --- */
   .radar { position:relative; width:56px; height:56px; border-radius:50%; flex:none;
@@ -152,8 +181,18 @@ _PAGE_STYLE = """
            background:conic-gradient(from 0deg, rgba(111,155,255,.7), transparent 32%);
            animation: spin 2.6s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
+  .brand .radar { width:22px; height:22px; }
 
   main { position:relative; z-index:1; max-width:840px; margin:0 auto; padding:26px 20px 60px; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border); padding:26px 20px; }
+  .footer-inner { max-width:840px; margin:0 auto; display:flex; flex-wrap:wrap;
+                  align-items:center; justify-content:space-between; gap:12px; }
+  .footer-inner .credit { font-size:12.5px; color:var(--muted); }
+  .footer-inner .credit strong { color:var(--text); }
+  .footer-links { display:flex; gap:16px; }
+  .footer-links a { color:var(--muted); text-decoration:none; font-size:12.5px; font-weight:600; }
+  .footer-links a:hover { color:var(--accent); }
 
   section { background:var(--panel); background:color-mix(in srgb, var(--panel) 86%, transparent);
             backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
@@ -232,6 +271,27 @@ _PAGE_STYLE = """
 
 _PAGE_SCRIPT = """
 (function () {
+  // Light/dark theme toggle (per-browser only, never read back by the server).
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('theme-toggle');
+  function applyTheme(t) {
+    if (t === 'light' || t === 'dark') root.setAttribute('data-theme', t);
+    else root.removeAttribute('data-theme');
+    if (themeBtn) themeBtn.textContent = (root.getAttribute('data-theme') === 'dark') ? '\\u2600' : '\\u{1F319}';
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('legacylift-theme'); } catch (e) { /* private mode etc. */ }
+  applyTheme(saved);
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme');
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var next = !current ? (prefersDark ? 'light' : 'dark') : (current === 'dark' ? 'light' : 'dark');
+      applyTheme(next);
+      try { localStorage.setItem('legacylift-theme', next); } catch (e) { /* ignore */ }
+    });
+  }
+
   // Real 3D tilt-on-hover for every card marked [data-tilt].
   document.querySelectorAll('[data-tilt]').forEach(function (card) {
     card.addEventListener('mousemove', function (e) {
@@ -317,13 +377,22 @@ _INDEX_TEMPLATE = """<!DOCTYPE html>
 <style>{{ style|safe }}</style></head>
 <body>
 <div class="bg-orbs" aria-hidden="true"><span class="orb orb1"></span><span class="orb orb2"></span><span class="orb orb3"></span></div>
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="radar" aria-hidden="true"></span> LegacyLift</a>
+    <div class="nav-cta">
+      <button class="icon-btn" id="theme-toggle" title="Toggle light/dark" aria-label="Toggle theme">&#127769;</button>
+      <a class="btn-ghost" href="https://github.com/gulamsakaria/legacylift" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</nav>
 <header class="reveal">
   <div class="header-inner">
     <div>
+      <div class="eyebrow">&#9889; Live &mdash; no signup, real pipeline</div>
       <h1>LegacyLift <span class="grad-text">Dashboard</span></h1>
       <div class="sub">Upload your own legacy PHP project and get a real scan, fix and report — no demo data.</div>
     </div>
-    <div class="radar" aria-hidden="true"></div>
   </div>
 </header>
 <main>
@@ -375,6 +444,17 @@ _INDEX_TEMPLATE = """<!DOCTYPE html>
     {% endif %}
   </section>
 </main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="credit">LegacyLift &mdash; built for the IBM Bob 2.0 Hackathon (lablab.ai). Developed by
+      <a href="https://www.linkedin.com/in/gulamsakaria/" target="_blank" rel="noopener"><strong>Gulam Sakaria</strong></a>.</div>
+    <div class="footer-links">
+      <a href="https://github.com/gulamsakaria" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/gulamsakaria/legacylift" target="_blank" rel="noopener">Repo</a>
+    </div>
+  </div>
+</footer>
 
 <div class="scan-overlay" id="scan-overlay">
   <div class="scan-box">
