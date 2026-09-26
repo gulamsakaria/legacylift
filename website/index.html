@@ -87,9 +87,9 @@
       <div class="section-head will-reveal">
         <div class="eyebrow">⚡ Live, no signup</div>
         <h2>Scan your own PHP code right now</h2>
-        <p>Upload a <code>.zip</code> of a small project, or a single <code>.php</code> file — this
+        <p id="scan-intro">Upload a <code>.zip</code> of a small project, or a single <code>.php</code> file — this
            runs the real scan → fix → test → verify → report pipeline and hands you back
-           the actual report. Nothing is stored after the response.</p>
+           the actual report.</p>
       </div>
 
       <form id="scan-form" class="scan-panel tilt will-reveal" data-tilt
@@ -99,15 +99,15 @@
           <div class="dz-icon">⇪</div>
           <div class="dz-text" id="dz-text">Drop a .zip or .php file here, or click to browse</div>
         </label>
-        <div class="hint" style="text-align:center;">Single .php file works best for a quick try — keep zips small.</div>
+        <div class="hint" style="text-align:center;">Single .php file works best for a quick try — keep it small for a fast response.</div>
         <button type="submit" id="scan-btn">Run LegacyLift on this file</button>
-        <div class="scan-limits">
-          <span>📦 ~4&nbsp;MB upload limit</span>
-          <span>⏱️ single request, no history saved</span>
-          <span>🔒 processed and discarded immediately</span>
+        <div class="scan-limits" id="scan-limits">
+          <span id="scan-limit-note">📦 ~4&nbsp;MB upload limit</span>
+          <span id="scan-history-note">⏱️ single request, no history saved</span>
+          <span>🔒 nothing shared with anyone else</span>
         </div>
       </form>
-      <div class="scan-fallback">
+      <div class="scan-fallback" id="scan-fallback">
         Need a bigger project, run history, or a migration-notes doc? Run the full
         <a href="#get-started">local dashboard</a> instead — no size limit there.
       </div>

@@ -30,6 +30,16 @@ from .verifier import verify as run_verify
 ALLOWED_SINGLE_FILE_EXT = {".php", ".phtml", ".inc"}
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
 
+# The marketing/landing page lives in website/ at the repo root (a sibling
+# of src/), not inside this package -- see website/README.md. When it's
+# present (i.e. this is running from a full checkout, as on Render), it
+# becomes the "/" page and its upload form posts straight to this same
+# server's real, persistent pipeline (see the "/api/scan" alias on
+# `upload()` below) instead of Vercel's stateless serverless version. When
+# it's absent (e.g. a standalone install of just this package), "/" falls
+# back to the simple built-in dashboard page so nothing 404s.
+_WEBSITE_DIR = Path(__file__).resolve().parent.parent.parent / "website"
+
 
 class UploadError(ValueError):
     """A problem with the upload itself (bad zip, wrong type, too big) —
@@ -501,7 +511,30 @@ def create_app(data_dir: Path):
 
     @app.route("/", methods=["GET"])
     def index():
+        website_index = _WEBSITE_DIR / "index.html"
+        if website_index.is_file():
+            return send_from_directory(str(_WEBSITE_DIR), "index.html")
         return _render()
+
+    @app.route("/dashboard", methods=["GET"])
+    def dashboard_home():
+        """The simple built-in upload page (drag-drop + run history), always
+        available here even when "/" is serving the full website."""
+        return _render()
+
+    if _WEBSITE_DIR.is_dir():
+
+        @app.route("/styles.css")
+        def website_styles():
+            return send_from_directory(str(_WEBSITE_DIR), "styles.css")
+
+        @app.route("/script.js")
+        def website_script():
+            return send_from_directory(str(_WEBSITE_DIR), "script.js")
+
+        @app.route("/sample-report/<path:filename>")
+        def website_sample_report(filename: str):
+            return send_from_directory(str(_WEBSITE_DIR / "sample-report"), filename)
 
     @app.errorhandler(413)
     def too_large(_exc):
@@ -563,6 +596,13 @@ def create_app(data_dir: Path):
         runs.append({"id": run_id, "name": filename, "time": time.strftime("%Y-%m-%d %H:%M:%S"), **summary})
         _save_runs(runs)
         return redirect(url_for("report_file", run_id=run_id, filename="report.html"))
+
+    # The website's "Scan your code" form posts to /api/scan (matching the
+    # path its Vercel-hosted, stateless twin — website/api/scan.py — uses).
+    # Here on Render this server is a real persistent process, so instead of
+    # that 4 MB/no-history workaround, /api/scan just IS this same full
+    # pipeline: same view function, same 25 MB limit, same run history.
+    app.add_url_rule("/api/scan", endpoint="api_scan_alias", view_func=upload, methods=["POST"])
 
     @app.route("/runs/<run_id>/<path:filename>")
     def report_file(run_id: str, filename: str):

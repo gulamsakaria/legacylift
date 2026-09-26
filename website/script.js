@@ -1,6 +1,26 @@
 (function () {
   "use strict";
 
+  /* ---------- adapt the scan-limits copy to whichever backend is live ----------
+     This one index.html is shared by two deployments: Vercel's stateless
+     /api/scan (small upload cap, no history) and Render's full dashboard
+     serving the same page with a real, persistent /api/scan alias (see
+     src/legacylift/webapp.py). Rather than hard-coding either story, probe
+     for the Render-only /dashboard route and adjust the copy to match
+     reality instead of leaving a claim that's false on one of the two. */
+  fetch("/dashboard", { method: "HEAD" }).then(function (r) {
+    if (!r.ok) return;
+    var limitNote = document.getElementById("scan-limit-note");
+    var historyNote = document.getElementById("scan-history-note");
+    var fallback = document.getElementById("scan-fallback");
+    if (limitNote) limitNote.textContent = "📦 25 MB upload limit";
+    if (historyNote) historyNote.textContent = "📜 run history is saved";
+    if (fallback) {
+      fallback.innerHTML = 'Want to browse past runs? '
+        + '<a href="/dashboard">Open the run-history dashboard</a> — same server, same pipeline.';
+    }
+  }).catch(function () { /* Vercel: no /dashboard route, keep the copy as-is */ });
+
   /* ---------- theme toggle (persisted per-browser only, never read back by us) ---------- */
   var root = document.documentElement;
   var themeBtn = document.getElementById("theme-toggle");
